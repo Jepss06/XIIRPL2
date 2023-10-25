@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    .btn-grad {
+      background-image: linear-gradient(to right, #00d2ff 0%, #3a7bd5 51%, #00d2ff 100%);
+      margin: 10px;
+      padding: 15px 45px;
+      text-align: center;
+      text-transform: uppercase;
+      transition: 0.5s;
+      background-size: 200% auto;
+      color: white;
+      box-shadow: 0 0 20px #eee;
+      border-radius: 10px;
+      display: block;
+    }
+
+    .btn-grad:hover {
+      background-position: right center;
+      /* change the direction of the change here */
+      color: #fff;
+      text-decoration: none;
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="/">market</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <a class="nav-item nav-link active" href="/">Home <span class="sr-only">(current)</span></a>
+        <a class="nav-item nav-link" href="/login">login</a>
+        <a class="nav-item nav-link" href="/register">register</a>
+        <a class="nav-item nav-link" href="/logout">logout</a>
+      </div>
+    </div>
+  </nav>
+  <div class="container mt-3">
+    <!-- Button trigger modal -->
+    <% if(user){ %>
+    <% if(user.role == 1){ %>
+    <%= uang(user.saldo) %>
+    <button type="button" class="btn-grad" data-bs-toggle="modal" data-bs-target="#exampleModal">
+      Tambah Data
+    </button>
+    <% } %>
+    <a href="/transaksi"><i class="fa-solid fa-cart-shopping fa-beat fa-lg" style="color: #0091ff;"></i></a>
+    <% } %>
+    <a href="/shop/<%= idJbar %>">
+      <i class="fa-solid fa-shop fa-bounce fa-lg" style="color: #005eff;"></i>
+    </a>
+    <div class="row">
+      <div class="col-md-6">
+        <table border="1" class="table table-dark table-striped mt-3">
+          <tr>
+            <th>Nama Barang</th>
+            <th>Harga Barang</th>
+            <th>Stock Barang</th>
+            <th>pilih </th>
+            <th>action</th>
+          </tr>
+          <% for(let a of bar){ %>
+          <tr>
+
+            <td>
+              <%= a.Nama_barang %>
+            </td>
+            <td>
+
+              <% if(a.harga>0) { %>
+              <%= uang(a.harga) %>
+              <% }else{%>
+              <%= uang(0) %>
+              <% } %>
+            </td>
+            <td>
+              <%= a.new_stock %>
+            </td>
+            <td>
+              <% if(a.new_stock <= 0){ %>
+              <div style="color:red">stock habis</div>
+              <% }else{ %>
+
+              <button type="button" class="badge bg-success" data-bs-toggle="modal" onclick="barang('<%= a.Id_barang %>','<%= a.harga %>','<%= a.new_stock %>')" data-bs-target="#modalBarang">
+                pilih
+              </button>
+              <% } %>
+            </td>
+            <td>
+              <!-- karena id sebagai identitas database, 
+            maka yang akan terhapus akan sesuai dengan id yang
+          terpilih -->
+              <% if(user){ %>
+              <% if(user.role == 1){ %>
+              <a href="/hapusBarang/<%= a.Id_barang %>" onclick="return confirm('Yakin dek?')" class="badge bg-danger">hapus</a>
+              <% } %>
+              <% } %>
+            </td>
+          </tr>
+          <% } %>
+        </table>
+      </div>
+
+    </div>
+  </div>
+  </div>
+  </div>
+
+
+  <%- include('modal.ejs') %>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+  <script>
+    function barang(idBarang, hargaBarang, stock) {
+      const inputBarangId = document.getElementById("barang_id");
+      inputBarangId.value = idBarang;
+      const inputHargabarang = document.getElementById("hargaBarang");
+      inputHargabarang.value = hargaBarang;
+      const inputStock = (document.getElementById("Stock").value = stock);
+    }
+    const total_harga = () => {
+      const harga = document.getElementById("hargaBarang").value;
+      let jumlahInput = document.getElementById("jumlah");
+      const stockinput = document.getElementById("Stock");
+      let stock = parseInt(stockinput.value);
+      let jumlah = parseInt(jumlahInput.value);
+      if (jumlah > stock) {
+        alert("Stock anda kurang");
+        jumlahInput.value = stock;
+        document.getElementById("new_Stock").value = stock - jumlahInput.value;
+        document.getElementById("total").value = harga * jumlahInput.value;
+      } else {
+        document.getElementById("new_Stock").value = stock - jumlahInput.value;
+        document.getElementById("total").value = harga * jumlahInput.value;
+      }
+
+      // let stockBaru = document.getElementById("new_Stock");
+      // const newStock = stock - jumlah
+      // stockBaru.value = newStock
+      // document.getElementById("total").value = harga * jumlah;
+    };
+    const validasi_modal1 = () => {
+      const harga = document.getElementById("harga").value;
+      const save = document.getElementById("save");
+      const NamaBarang = document.getElementById("NamaBarang");
+      save.style.display = "none";
+      console.log(harga);
+      if (NamaBarang.value.length >= 3) {
+        if (harga % 500 == 0) {
+          if (harga.length >= 3) {
+            save.style.display = "block";
+          } else {}
+        } else {
+          alert("Masukan harga dengan benar");
+          save.style.display = "none";
+        }
+      } else {
+        alert("Masukan Data dengan benar");
+        save.style.display = "none";
+      }
+    };
+
+    const cancel = (newStock, jumlah, idBarang, idtransaksi) => {
+      console.log(newStock, idBarang, jumlah, idtransaksi);
+      document.getElementById("barang_id2").value = idBarang;
+      document.getElementById("id_transaksi").value = idtransaksi;
+      document.getElementById("stockBaru").value =
+        parseInt(newStock) + parseInt(jumlah);
+    };
+  </script>
+</body>
+
+</html>

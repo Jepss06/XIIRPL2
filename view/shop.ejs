@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+</head>
+
+<body>
+  <div class="container">
+    <div class="row grid gap-3 mt-3">
+      <% for(let a of bar){ %>
+      <div class="card" style="width: 18rem;">
+        <img src="/uploads/<%= a.image %>" class="card-img-top h-50 w-100" alt="...">
+        <div class="card-body">
+          <h3 class="card-title"><%= a.Nama_barang %></h3>
+          <h5>harga <%= uang(a.harga) %></h5>
+          <p class="card-text">stock <%= a.new_stock %></p>
+          <a href="#" class="btn btn-primary">Go somewhere</a>
+        </div>
+      </div>
+      <% } %>
+    </div>
+  </div>
+</body>
+
+</html>
